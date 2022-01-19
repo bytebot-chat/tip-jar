@@ -33,7 +33,7 @@ func main() {
 	flag.Parse()
 	log.Info().
 		Str("Redis address", *addr).
-		Msg("Bytebot Party Pack starting up!")
+		Msg("Bytebot Tip Jar starting up!")
 
 	ctx := context.Background()
 
@@ -81,7 +81,7 @@ func subscribeIRC(ctx context.Context, wg *sync.WaitGroup, rdb *redis.Client, to
 	for msg := range channel {
 		m := &Message{}
 
-		// Unpack pubsub message into simplified message for Party Pack
+		// Unpack pubsub message into simplified message for Tip Jar
 		err := m.Unmarshal([]byte(msg.Payload))
 		if err != nil {
 			log.Error().
@@ -93,7 +93,7 @@ func subscribeIRC(ctx context.Context, wg *sync.WaitGroup, rdb *redis.Client, to
 			Msg("Received message")
 
 		// Trigger doing its own treatment of the message
-		answer, activated := reactions(*m)
+		answer, activated := suserSaidSomethingProblematic(ctx, *m, rdb)
 		if activated {
 			for _, q := range outbound {
 				replyIRC(ctx, *m, rdb, q, answer)
@@ -122,9 +122,9 @@ func subscribeDiscord(ctx context.Context, wg *sync.WaitGroup, rdb *redis.Client
 
 		log.Debug().
 			RawJSON("Received message", []byte(fmt.Sprintf("%+v", m))).
-			Msg("Party-Pack message")
+			Msg("tip jar message")
 
-		answer, activated := reactions(*m)
+		answer, activated := suserSaidSomethingProblematic(ctx, *m, rdb)
 		if activated {
 			log.Debug().Msg("Reactions triggered")
 			for _, q := range outbound {

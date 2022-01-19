@@ -9,7 +9,7 @@ import (
 	"github.com/bytebot-chat/gateway-irc/model"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog/log"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 func replyIRC(ctx context.Context, m Message, rdb *redis.Client, topic, reply string) {
@@ -37,7 +37,7 @@ func replyDiscord(ctx context.Context, m Message, rdb *redis.Client, topic, repl
 	log.Debug().Msg("replyDiscord")
 	metadata := Metadata{
 		Dest:   "discord",
-		Source: "party-pack",
+		Source: "tip-jar",
 		ID:     uuid.Must(uuid.NewV4(), *new(error)),
 	}
 
